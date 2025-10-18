@@ -18,7 +18,10 @@ function App() {
   // Check API health
   useEffect(() => {
     fetch(`${API_URL}/health`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('API health check failed');
+        return res.json();
+      })
       .then(data => setApiStatus(data.status === 'healthy' ? 'Connected ✓' : 'Error'))
       .catch(() => setApiStatus('Disconnected ✗'));
   }, []);
@@ -27,6 +30,7 @@ function App() {
   const fetchItems = async () => {
     try {
       const response = await fetch(`${API_URL}/api/resume`);
+      if (!response.ok) throw new Error('Failed to fetch items');
       const data = await response.json();
       setResumeItems(data);
     } catch (error) {
@@ -49,22 +53,26 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ skill, description }),
       });
+      if (!response.ok) throw new Error('Failed to add item');
       const newItem = await response.json();
       setResumeItems([...resumeItems, newItem]);
       setSkill('');
       setDescription('');
     } catch (error) {
       console.error('Error adding item:', error);
+      alert('Failed to add item. Please try again.');
     }
   };
 
   // Delete resume item
   const handleDelete = async (id: number) => {
     try {
-      await fetch(`${API_URL}/api/resume/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_URL}/api/resume/${id}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete item');
       setResumeItems(resumeItems.filter(item => item.id !== id));
     } catch (error) {
       console.error('Error deleting item:', error);
+      alert('Failed to delete item. Please try again.');
     }
   };
 
