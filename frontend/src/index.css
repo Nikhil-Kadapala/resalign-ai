@@ -1,11 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,55 +14,255 @@
 }
 
 a {
-  font-weight: 500;
-  color: #646cff;
   text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  a:hover {
-    color: #747bff;
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
   }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Sonner Toast Animations and Styles */
+@keyframes slideIn {
+  from {
+    transform: translate(calc(100% + 1rem), 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(calc(100% + 1rem), 0);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeOut {
+  from {
+    transform: translate(var(--swipe-amount, 0), 0);
+  }
+  to {
+    transform: translate(calc(100% + 1rem), 0);
+  }
+}
+
+.toaster {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 90vw;
+}
+
+.toaster > * {
+  animation: slideIn 0.3s ease-in-out forwards;
+}
+
+.toaster > .sonner-toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  background: white;
+  color: var(--normal-text, hsl(0 0% 3.6%));
+  box-shadow: var(--normal-shadow, 0 4px 12px rgba(0, 0, 0, 0.15));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.sonner-toast svg {
+  min-width: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Dark mode */
+.dark .toaster > .sonner-toast {
+  border-color: hsl(0 0% 14.9%);
+  background: hsl(0 0% 10%);
+  color: hsl(0 0% 98%);
+}
+
+/* ===== TAILWIND SOLID COLOR TOASTS (TRAFFIC LIGHT STYLE) ===== */
+
+/* Light Mode - Success (Green) */
+.toaster > .sonner-toast.sonner-success {
+  background: var(--sonner-success-bg) !important;
+  color: var(--sonner-success-text) !important;
+  border: 2px solid #16a34a !important;
+}
+
+.toaster > .sonner-toast.sonner-success svg {
+  color: var(--sonner-success-text) !important;
+}
+
+/* Light Mode - Error (Red) */
+.toaster > .sonner-toast.sonner-error {
+  background: var(--sonner-error-bg) !important;
+  color: var(--sonner-error-text) !important;
+  border: 2px solid #dc2626 !important;
+}
+
+.toaster > .sonner-toast.sonner-error svg {
+  color: var(--sonner-error-text) !important;
+}
+
+/* Light Mode - Warning (Amber) */
+.toaster > .sonner-toast.sonner-warning {
+  background: var(--sonner-warning-bg) !important;
+  color: var(--sonner-warning-text) !important;
+  border: 2px solid #f59e0b !important;
+}
+
+.toaster > .sonner-toast.sonner-warning svg {
+  color: var(--sonner-warning-text) !important;
+}
+
+/* Light Mode - Info (Blue) */
+.toaster > .sonner-toast.sonner-info {
+  background: var(--sonner-info-bg) !important;
+  color: var(--sonner-info-text) !important;
+  border: 2px solid #1d4ed8 !important;
+}
+
+.toaster > .sonner-toast.sonner-info svg {
+  color: var(--sonner-info-text) !important;
+}
+
+/* Light Mode - Loading (Blue) */
+.toaster > .sonner-toast.sonner-loading {
+  background: var(--sonner-info-bg) !important;
+  color: var(--sonner-info-text) !important;
+  border: 2px solid #1d4ed8 !important;
+}
+
+.toaster > .sonner-toast.sonner-loading svg {
+  color: var(--sonner-info-text) !important;
+}
+
+/* Dark Mode - Same colors */
+.dark .toaster > .sonner-toast.sonner-success {
+  background: var(--sonner-success-bg) !important;
+  color: var(--sonner-success-text) !important;
+}
+
+.dark .toaster > .sonner-toast.sonner-error {
+  background: var(--sonner-error-bg) !important;
+  color: var(--sonner-error-text) !important;
+}
+
+.dark .toaster > .sonner-toast.sonner-warning {
+  background: var(--sonner-warning-bg) !important;
+  color: var(--sonner-warning-text) !important;
+}
+
+.dark .toaster > .sonner-toast.sonner-info {
+  background: var(--sonner-info-bg) !important;
+  color: var(--sonner-info-text) !important;
+}
+
+.dark .toaster > .sonner-toast.sonner-loading {
+  background: var(--sonner-info-bg) !important;
+  color: var(--sonner-info-text) !important;
 }
