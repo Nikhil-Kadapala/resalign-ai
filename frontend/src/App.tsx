@@ -1,135 +1,40 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-
-interface ResumeItem {
-  id?: number;
-  skill: string;
-  description: string;
-}
-
-const API_URL = 'http://localhost:8000';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { Toaster } from './components/ui/sonner'
+import { Landing } from './pages/Landing'
+import { Login } from './pages/Login'
+import { Signup } from './pages/Signup'
+import { AuthCallback } from './pages/AuthCallback'
+import { Dashboard } from './pages/Dashboard'
+import { NewAnalysis } from './pages/NewAnalysis'
+import { AnalysisResults } from './pages/AnalysisResults'
 
 function App() {
-  const [resumeItems, setResumeItems] = useState<ResumeItem[]>([]);
-  const [skill, setSkill] = useState('');
-  const [description, setDescription] = useState('');
-  const [apiStatus, setApiStatus] = useState<string>('Checking...');
-
-  // Check API health
-  useEffect(() => {
-    fetch(`${API_URL}/health`)
-      .then(res => {
-        if (!res.ok) throw new Error('API health check failed');
-        return res.json();
-      })
-      .then(data => setApiStatus(data.status === 'healthy' ? 'Connected ✓' : 'Error'))
-      .catch(() => setApiStatus('Disconnected ✗'));
-  }, []);
-
-  // Fetch resume items
-  const fetchItems = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/resume`);
-      if (!response.ok) throw new Error('Failed to fetch items');
-      const data = await response.json();
-      setResumeItems(data);
-    } catch (error) {
-      console.error('Error fetching items:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  // Add new resume item
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!skill || !description) return;
-
-    try {
-      const response = await fetch(`${API_URL}/api/resume`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skill, description }),
-      });
-      if (!response.ok) throw new Error('Failed to add item');
-      const newItem = await response.json();
-      setResumeItems([...resumeItems, newItem]);
-      setSkill('');
-      setDescription('');
-    } catch (error) {
-      console.error('Error adding item:', error);
-      alert('Failed to add item. Please try again.');
-    }
-  };
-
-  // Delete resume item
-  const handleDelete = async (id: number) => {
-    try {
-      const response = await fetch(`${API_URL}/api/resume/${id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Failed to delete item');
-      setResumeItems(resumeItems.filter(item => item.id !== id));
-    } catch (error) {
-      console.error('Error deleting item:', error);
-      alert('Failed to delete item. Please try again.');
-    }
-  };
-
   return (
-    <div className="App">
-      <header>
-        <h1>Align AI</h1>
-        <p className="tagline">Align your resume and skills to land the job</p>
-        <div className="api-status">API Status: {apiStatus}</div>
-      </header>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
-      <main>
-        <section className="add-item">
-          <h2>Add Resume Item</h2>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Skill"
-              value={skill}
-              onChange={(e) => setSkill(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-            <button type="submit">Add Item</button>
-          </form>
-        </section>
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analysis/new" element={<NewAnalysis />} />
+            <Route path="/analysis/:resumeId/:jdId" element={<AnalysisResults />} />
+          </Route>
 
-        <section className="items-list">
-          <h2>Resume Items ({resumeItems.length})</h2>
-          {resumeItems.length === 0 ? (
-            <p className="empty-message">No items yet. Add your first skill!</p>
-          ) : (
-            <div className="items-grid">
-              {resumeItems.map((item) => (
-                <div key={item.id} className="item-card">
-                  <h3>{item.skill}</h3>
-                  <p>{item.description}</p>
-                  <button 
-                    onClick={() => item.id && handleDelete(item.id)}
-                    className="delete-btn"
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </main>
-    </div>
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
+      <Toaster />
+    </BrowserRouter>
   )
 }
 
 export default App
+
