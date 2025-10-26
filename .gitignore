@@ -153,6 +153,14 @@ venv.bak/
 
 # mkdocs documentation
 /site
+/implementations
+/backend/api/tests/
+/backend/pytest.ini 
+/backend/.coverage
+.cursor/rules
+.github/instructions
+.vscode/
+
 
 # mypy
 .mypy_cache/
