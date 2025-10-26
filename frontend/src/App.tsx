@@ -7,7 +7,6 @@ import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
 import { AuthCallback } from './pages/AuthCallback'
 import { Dashboard } from './pages/Dashboard'
-import { NewAnalysis } from './pages/NewAnalysis'
 import { AnalysisResults } from './pages/AnalysisResults'
 
 function App() {
@@ -23,7 +22,6 @@ function App() {
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/analysis/new" element={<NewAnalysis />} />
             <Route path="/analysis/:resumeId/:jdId" element={<AnalysisResults />} />
           </Route>
 
