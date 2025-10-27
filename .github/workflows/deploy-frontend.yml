@@ -45,6 +45,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
+          VITE_LOOKUP_API_KEY: ${{ secrets.VITE_LOOKUP_API_KEY }}
         run: npm run build
       
       - name: Setup Pages
