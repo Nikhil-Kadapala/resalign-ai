@@ -60,13 +60,13 @@ export const WaitlistModal = ({ open, onOpenChange }: WaitlistModalProps) => {
         .select('email')
         .eq('email', email.toLowerCase().trim())
         .maybeSingle()
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        // PGRST116 is the "no rows returned" error, which is expected
+      
+      if (checkError) {
+        console.error('Error checking for existing email:', checkError)
         throw checkError
       }
 
-      // Insert if email doesn't exist
+      // Only insert if email doesn't exist
       if (!existing) {
         const { error: insertError } = await supabase
           .from('waitlist')
@@ -75,35 +75,47 @@ export const WaitlistModal = ({ open, onOpenChange }: WaitlistModalProps) => {
             name: name.trim(),
           })
 
+        // Handle duplicate key error gracefully (race condition or concurrent requests)
         if (insertError) {
-          throw insertError
-        }
+          // Error code 23505 is PostgreSQL unique constraint violation
+          if (insertError.code === '23505') {
+            console.log('Email already exists in waitlist (race condition)')
+            // Continue to show success - user is already on the list
+          } else {
+            throw insertError
+          }
+        } else {
+          // Only send email if this was a new insertion
+          try {
+            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+            const supabaseKey = import.meta.env.VITE_SUPABASE_KEY
+            
+            const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-waitlist-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseKey}`,
+              },
+              body: JSON.stringify({
+                name: name.trim(),
+                email: email.toLowerCase().trim(),
+              }),
+            })
 
-        // Send confirmation email via Edge Function
-        try {
-          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-          const supabaseKey = import.meta.env.VITE_SUPABASE_KEY
-          
-          const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-waitlist-email`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseKey}`,
-            },
-            body: JSON.stringify({
-              name: name.trim(),
-              email: email.toLowerCase().trim(),
-            }),
-          })
-
-          if (!emailResponse.ok) {
-            console.error('Failed to send confirmation email:', await emailResponse.text())
+            if (!emailResponse.ok) {
+              const errorText = await emailResponse.text()
+              console.error('Failed to send confirmation email:', errorText)
+              // Don't throw error - user is still on waitlist even if email fails
+            } else {
+              console.log('Confirmation email sent successfully')
+            }
+          } catch (emailError) {
+            console.error('Error sending confirmation email:', emailError)
             // Don't throw error - user is still on waitlist even if email fails
           }
-        } catch (emailError) {
-          console.error('Error sending confirmation email:', emailError)
-          // Don't throw error - user is still on waitlist even if email fails
         }
+      } else {
+        console.log('Email already exists in waitlist')
       }
 
       // Show success regardless of whether it was a new or existing email
@@ -113,9 +125,10 @@ export const WaitlistModal = ({ open, onOpenChange }: WaitlistModalProps) => {
       setTimeout(() => {
         onOpenChange(false)
       }, 3000)
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting to waitlist:', error)
-      toast.error('Failed to join waitlist. Please try again.')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to join waitlist. Please try again.'
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
