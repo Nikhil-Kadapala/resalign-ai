@@ -1,87 +1,198 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { useAuth } from '../hooks/useAuth'
 import logo from '@/assets/logo.png'
 import { Features } from './Features'
 import { FAQ } from './FAQ'
 import { WaitlistModal } from '@/components/WaitlistModal'
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8 },
+  },
+}
+
+const titleVariants = {
+  hidden: { opacity: 0, y: 30 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8 },
+  },
+}
+
+const buttonHoverVariants = {
+  hover: { scale: 1.05, transition: { duration: 0.2 } },
+  tap: { scale: 0.98 },
+}
+
+const logoVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.6 },
+  },
+  float: {
+    y: [0, -10, 0],
+    transition: { duration: 3, repeat: Infinity },
+  },
+}
+
 export const Landing = () => {
   const { user } = useAuth()
   const [waitlistOpen, setWaitlistOpen] = useState(false)
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Navigation */}
-      <nav className="flex items-center justify-between px-6 py-4 md:px-12 border-b border-purple-700/30 backdrop-blur-sm">
+      <motion.nav 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="flex items-center justify-between px-6 py-4 md:px-12 border-b border-purple-700/30 backdrop-blur-sm"
+      >
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="w-fit h-10 rounded-lg  flex items-center justify-center">
-            <img src={logo} alt="logo" className="w-8 h-8" />
-            <span className="text-white font-bold text-xl">ResAlign AI</span>
-          </div>
+          <motion.div 
+            initial={logoVariants.hidden}
+            animate={logoVariants.show}
+            className="w-fit h-10 rounded-lg flex items-center justify-center"
+          >
+            <motion.img 
+              src={logo} 
+              alt="logo" 
+              className="w-8 h-8" 
+              animate={logoVariants.float}
+            />
+            <span className="text-white font-bold text-xl ml-2">ResAlign AI</span>
+          </motion.div>
           <div className="text-center grid md:grid-cols-3 gap-12">
-            <a href="#features" className="text-white font-bold text-lg">Features</a>
-            <a href="#how-it-works" className="text-white font-bold text-lg">How It Works</a>
-            <a href="#faq" className="text-white font-bold text-lg">FAQ</a>
+            {['Features', 'How It Works', 'FAQ'].map((item, i) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                whileHover={{ color: '#c084fc', transition: { duration: 0.2 } }}
+                className="text-white font-bold text-lg transition-colors"
+              >
+                {item}
+              </motion.a>
+            ))}
           </div>
-          
         </div>
         <div className="flex items-center space-x-4">
           {user ? (
-            <Link
-              to="/dashboard"
-              className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+            <motion.div
+              whileHover="hover"
+              whileTap="tap"
+              variants={buttonHoverVariants}
             >
-              Dashboard
-            </Link>
+              <Link
+                to="/dashboard"
+                className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+              >
+                Dashboard
+              </Link>
+            </motion.div>
           ) : (
-            <button
+            <motion.button
+              whileHover="hover"
+              whileTap="tap"
+              variants={buttonHoverVariants}
               onClick={() => setWaitlistOpen(true)}
               className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all"
             >
               Join Waitlist
-            </button>
+            </motion.button>
           )}
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Hero Section */}
       <div className="max-w-6xl mx-auto px-6 py-20 md:py-32">
-        <div className="text-center space-y-8">
-          <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+        <motion.div 
+          initial="hidden"
+          animate="show"
+          variants={containerVariants}
+          className="text-center space-y-8"
+        >
+          <motion.h1 
+            variants={titleVariants}
+            className="text-5xl md:text-7xl font-bold text-white leading-tight"
+          >
             Align Your Skills With
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent block">
               {' '}Your Dream Job
             </span>
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          </motion.h1>
+          
+          <motion.p 
+            variants={itemVariants}
+            className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed"
+          >
             AI-powered resume analysis that matches your skills to job descriptions.
             Turn job descriptions into career action plans. 
             Get actionable insights, identify gaps, and land your next opportunity
-          </p>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+          </motion.p>
+          
+          <motion.div 
+            variants={containerVariants}
+            className="flex flex-col md:flex-row items-center justify-center gap-4"
+          >
             {user ? (
-              <Link
-                to="/dashboard"
-                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+              <motion.div
+                variants={itemVariants}
+                whileHover="hover"
+                whileTap="tap"
+                custom={buttonHoverVariants}
               >
-                Go to Dashboard
-              </Link>
+                <Link
+                  to="/dashboard"
+                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+                >
+                  Go to Dashboard
+                </Link>
+              </motion.div>
             ) : (
-              <button
+              <motion.button
+                variants={itemVariants}
+                whileHover="hover"
+                whileTap="tap"
                 onClick={() => setWaitlistOpen(true)}
                 className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all"
               >
                 Join Waitlist
-              </button>
+              </motion.button>
             )}
-            <a
+            <motion.a
+              variants={itemVariants}
+              whileHover="hover"
+              whileTap="tap"
               href="#features"
               className="px-8 py-3 border-2 border-purple-500 text-purple-300 rounded-lg font-semibold hover:bg-purple-500/10 transition-all"
             >
               Learn More
-            </a>
-          </div>
-        </div>
+            </motion.a>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Features Section */}
@@ -91,7 +202,13 @@ export const Landing = () => {
       <div id="how-it-works" className="bg-gradient-to-tr from-slate-900 via-purple-900 to-slate-900 py-20 border-t border-purple-700/30">
         <div className="max-w-6xl mx-auto px-6">
           {/* Header */}
-          <div className="text-center mb-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-10"
+          >
             <div className="inline-block px-4 py-2 rounded-full border border-purple-500/30 mb-6">
               <span className="text-purple-300 text-sm font-semibold">⚙️ How It Works</span>
             </div>
@@ -107,58 +224,115 @@ export const Landing = () => {
               <br />
               Here's how to get started:
             </p>
-          </div>
+          </motion.div>
 
           {/* Steps Container */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-2">
             {/* Step 1 */}
-            <div className="flex flex-col items-center flex-1 max-w-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.6, delay: 0 }}
+              className="flex flex-col items-center flex-1 max-w-sm"
+            >
               <div className="mb-8 text-center">
-                <div className="text-9xl font-bold bg-gradient-to-br from-purple-400 to-pink-400 bg-clip-text text-transparent mb-6">
+                <motion.div 
+                  className="text-9xl font-bold bg-gradient-to-br from-purple-400 to-pink-400 bg-clip-text text-transparent mb-6"
+                  whileInView={{ scale: [0.8, 1.1, 1] }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
                   1
-                </div>
+                </motion.div>
                 <h3 className="text-2xl font-bold text-white mb-3">Upload Your Resume</h3>
                 <p className="text-gray-400">
                   Drop in your resume and job description.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Arrow 1 - Hidden on mobile */}
-            <div className="hidden md:flex items-center justify-center mb-24">
-              <div className="text-4xl text-purple-400">→</div>
-            </div>
+            {/* Arrow 1 */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ delay: 0.2 }}
+              className="hidden md:flex items-center justify-center mb-24"
+            >
+              <motion.div 
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="text-4xl text-purple-400"
+              >
+                →
+              </motion.div>
+            </motion.div>
 
             {/* Step 2 */}
-            <div className="flex flex-col items-center flex-1 max-w-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="flex flex-col items-center flex-1 max-w-sm"
+            >
               <div className="mb-8 text-center">
-                <div className="text-9xl font-bold bg-gradient-to-br from-blue-400 to-purple-400 bg-clip-text text-transparent mb-6">
+                <motion.div 
+                  className="text-9xl font-bold bg-gradient-to-br from-blue-400 to-purple-400 bg-clip-text text-transparent mb-6"
+                  whileInView={{ scale: [0.8, 1.1, 1] }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                >
                   2
-                </div>
+                </motion.div>
                 <h3 className="text-2xl font-bold text-white mb-3">Let AI Analyze & Match</h3>
                 <p className="text-gray-400">
                   ResAlign AI automatically analyzes your resume, identifies your strengths, and calculates your job fit score instantly.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Arrow 2 - Hidden on mobile */}
-            <div className="hidden md:flex items-center justify-center mb-24">
-              <div className="text-4xl text-purple-400">→</div>
-            </div>
+            {/* Arrow 2 */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ delay: 0.3 }}
+              className="hidden md:flex items-center justify-center mb-24"
+            >
+              <motion.div 
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
+                className="text-4xl text-purple-400"
+              >
+                →
+              </motion.div>
+            </motion.div>
 
             {/* Step 3 */}
-            <div className="flex flex-col items-center flex-1 max-w-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="flex flex-col items-center flex-1 max-w-sm"
+            >
               <div className="mb-8 text-center">
-                <div className="text-9xl font-bold bg-gradient-to-br from-pink-400 to-rose-400 bg-clip-text text-transparent mb-6">
+                <motion.div 
+                  className="text-9xl font-bold bg-gradient-to-br from-pink-400 to-rose-400 bg-clip-text text-transparent mb-6"
+                  whileInView={{ scale: [0.8, 1.1, 1] }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
                   3
-                </div>
+                </motion.div>
                 <h3 className="text-2xl font-bold text-white mb-3">Get Your Roadmap & Act</h3>
                 <p className="text-gray-400">
                   Receive actionable insights, personalized recommendations, and learning resources tailored to bridge your gaps and land the role.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -174,7 +348,13 @@ export const Landing = () => {
           <div className="border border-purple-500/30 rounded-3xl backdrop-blur-sm bg-gradient-to-br from-purple-500/10 to-blue-500/10 overflow-hidden">
             <div className="grid md:grid-cols-2 gap-12 items-center p-8 md:p-16">
               {/* Left Content */}
-              <div className="flex flex-col justify-center">
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.6 }}
+                className="flex flex-col justify-center"
+              >
                 <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
                   Ready to Get Out of Your
                   <br />
@@ -187,26 +367,46 @@ export const Landing = () => {
                 </p>
                 <div>
                   {user ? (
-                    <Link
-                      to="/dashboard"
-                      className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all text-lg"
+                    <motion.div
+                      whileHover="hover"
+                      whileTap="tap"
+                      variants={buttonHoverVariants}
                     >
-                      Go to Dashboard <span className="text-2xl">→</span>
-                    </Link>
+                      <Link
+                        to="/dashboard"
+                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all text-lg"
+                      >
+                        Go to Dashboard <span className="text-2xl">→</span>
+                      </Link>
+                    </motion.div>
                   ) : (
-                    <button
+                    <motion.button
+                      whileHover="hover"
+                      whileTap="tap"
+                      variants={buttonHoverVariants}
                       onClick={() => setWaitlistOpen(true)}
                       className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all text-lg"
                     >
                       Join Waitlist <span className="text-2xl">→</span>
-                    </button>
+                    </motion.button>
                   )}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Right Preview - Dashboard Mockup */}
-              <div className="relative hidden md:block">
-                <div className="bg-gradient-to-br from-slate-800/50 to-purple-900/50 rounded-2xl p-6 border border-purple-500/20 backdrop-blur-sm">
+              <motion.div 
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="relative hidden md:block"
+              >
+                <motion.div 
+                  className="bg-gradient-to-br from-slate-800/50 to-purple-900/50 rounded-2xl p-6 border border-purple-500/20 backdrop-blur-sm"
+                  whileInView={{ y: [0, -10, 0] }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
                   {/* Mock Dashboard */}
                   <div className="space-y-4">
                     {/* Header */}
@@ -268,11 +468,11 @@ export const Landing = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Glowing effect */}
                 <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full blur-3xl opacity-20"></div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -283,13 +483,14 @@ export const Landing = () => {
         <div className="max-w-7xl mx-auto px-6 py-8 md:py-8">
           <div className="flex flex-col md:flex-row justify-between gap-12 md:gap-16">
             {/* Logo and Branding */}
-            <div className="flex flex-col gap-6 md:w-1/4">
+            <div className="flex flex-col gap-3 md:w-1/4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-lg  flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center">
                   <img src={logo} alt="logo" className="w-8 h-8" />
                 </div>
                 <span className="text-white font-bold text-xl">ResAlign AI</span>
               </div>
+              <p className="text-gray-400 text-sm leading-relaxed">Align your resume and skills to land the job. Turn job descriptions into career action plans. Accelerate your career.</p>
             </div>
 
             {/* Footer Links Grid */}
@@ -315,14 +516,14 @@ export const Landing = () => {
               </div>
 
               {/* Community Column */}
-              <div>
+              {/* <div>
                 <h3 className="text-white font-semibold text-sm mb-6">Contact</h3>
                 <ul className="space-y-3">
                   <li><a href="https://github.com/nikhil-kadapala/resalign-ai" target="_blank" className="text-gray-400 hover:text-white transition-colors text-sm">GitHub</a></li>
                   <li><a href="https://www.linkedin.com/in/nikhil-kadapala/" target="_blank" className="text-gray-400 hover:text-white transition-colors text-sm">LinkedIn</a></li>
                   <li><a href="https://x.com/nikhil_kadapala" target="_blank" className="text-gray-400 hover:text-white transition-colors text-sm">X</a></li>
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
 
