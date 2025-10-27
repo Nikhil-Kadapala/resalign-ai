@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
-import { Loader, CheckCircle } from 'lucide-react'
+import { Loader, CheckCircle, X } from 'lucide-react'
 
 interface WaitlistModalProps {
   open: boolean
@@ -164,10 +164,7 @@ export const WaitlistModal = ({ open, onOpenChange }: WaitlistModalProps) => {
       // Show success regardless of whether it was a new or existing email
       setSubmitSuccess(true)
 
-      // Auto-close after 3 seconds
-      setTimeout(() => {
-        onOpenChange(false)
-      }, 3000)
+      // Remove auto-close - user can now close manually
     } catch (error) {
       console.error('Error submitting to waitlist:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to join waitlist. Please try again.'
@@ -190,8 +187,18 @@ export const WaitlistModal = ({ open, onOpenChange }: WaitlistModalProps) => {
                 animate="show"
                 exit="hidden"
                 variants={successVariants}
-                className="py-8 text-center px-6"
+                className="py-8 text-center px-6 relative"
               >
+                {/* Close Button */}
+                <motion.button
+                  onClick={() => onOpenChange(false)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+
                 <motion.div 
                   className="flex justify-center mb-6"
                   initial={{ scale: 0 }}
@@ -228,11 +235,52 @@ export const WaitlistModal = ({ open, onOpenChange }: WaitlistModalProps) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.4 }}
                   >
-                    <DialogDescription className="text-gray-300 text-center text-base">
+                    <DialogDescription className="text-gray-300 text-center text-base mb-4">
                       We'll notify you when ResAlign AI launches. Get ready to transform your job search!
                     </DialogDescription>
                   </motion.div>
                 </DialogHeader>
+
+                {/* Spam Disclaimer */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.4 }}
+                  className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-left space-y-3"
+                >
+                  <p className="text-sm text-amber-200 font-medium">📧 Important: Check Your Email</p>
+                  <div className="space-y-2 text-xs text-amber-100">
+                    <p>
+                      <strong>1. Check your spam/promotions folder</strong> - Our confirmation email might end up there. If you don't see it, search for "ResAlign AI" or "onboarding@alignai.cv"
+                    </p>
+                    <p>
+                      <strong>2. Add us to your contacts</strong> - Add <code className="bg-slate-900 px-1.5 py-0.5 rounded text-amber-100">onboarding@alignai.cv</code> to your trusted senders so you don't miss our launch notification
+                    </p>
+                    <p>
+                      <strong>3. Keep an eye out</strong> - We'll be sending you an exclusive early-access link when we go live. Make sure you're watching for it!
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Close Button */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.3 }}
+                  className="mt-6"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      onClick={() => onOpenChange(false)}
+                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg hover:shadow-purple-500/50"
+                    >
+                      Close
+                    </Button>
+                  </motion.div>
+                </motion.div>
               </motion.div>
             ) : (
               // Form State
@@ -256,6 +304,14 @@ export const WaitlistModal = ({ open, onOpenChange }: WaitlistModalProps) => {
                     </DialogDescription>
                   </motion.div>
                 </DialogHeader>
+
+                {/* Spam Disclaimer */}
+                <motion.div
+                  variants={itemVariants}
+                  className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mt-4 mb-4 text-xs text-blue-100"
+                >
+                  💡 <strong>Tip:</strong> Check your spam folder for our confirmation email and add onboarding@alignai.cv to your trusted contacts so you don't miss our launch notification.
+                </motion.div>
 
                 <motion.form 
                   onSubmit={handleSubmit} 
