@@ -41,7 +41,24 @@ const faqItems: FAQItem[] = [
   {
     id: 'faq-7',
     question: 'Is my resume data actually safe with you?',
-    answer: 'Your privacy is non-negotiable. All your data—resume, job descriptions, analysis history—is encrypted end-to-end using military-grade AES-256 encryption both in transit and at rest. We use Supabase, an enterprise-grade security provider, to store everything. We NEVER sell your data, share it with recruiters, or use it to train AI models without your permission. Your resume is only visible to you. You can delete your entire account and all associated data with one click, and we\'ll permanently remove everything within 24 hours. Read our privacy policy for complete transparency—we\'re serious about this.',
+    answer: `Your privacy is fundamental to how we operate. Here's exactly how we protect your data:
+
+🔒 Secure Storage
+All your resumes and job descriptions are stored in Supabase, an enterprise-grade database provider. Data is encrypted in transit (HTTPS) and at rest.
+
+🛡️ PII Masking for AI
+Before we send any data to our AI analysis service, we automatically mask all personally identifiable information. Email addresses, phone numbers, URLs, LinkedIn profiles, and social handles are replaced with anonymous placeholders. Your actual personal information never leaves your secure account.
+
+🚫 No Data Selling
+We NEVER sell, share, or rent your data to recruiters, employers, or third parties.
+
+⚙️ Complete Control
+Your resume and analysis history are only visible to you via Row-Level Security policies. You can request a copy of all your data anytime or delete everything with one click.
+
+🔍 Transparent AI Processing
+We use Google's Gemini API for intelligent matching, but only anonymized versions of your resume and job descriptions are sent (with PII masked). Your actual contact info, email, and phone number never reach external AI systems.
+
+For complete details, read our Privacy Policy and Terms of Service. We're committed to earning and keeping your trust.`,
   },
   {
     id: 'faq-8',
@@ -61,17 +78,44 @@ const faqItems: FAQItem[] = [
   {
     id: 'faq-11',
     question: 'How do I know if ResAlign will actually help me land jobs?',
-    answer: 'Here\'s what we know: Users who focus on roles with 75%+ compatibility score have 3x better callback rates than those applying broadly. Why? Because higher compatibility means you\'re genuinely qualified, you\'ll interview with confidence, and you\'ll be a strong candidate among the finalists. You\'re not hoping to sneak past ATS filters or fake experience levels. You\'re going into interviews prepared to talk about genuine alignment. That preparation, combined with strategic job selection, converts to offers. The best career move isn\'t applying to more jobs—it\'s applying to the right ones. ResAlign helps you find those.',
+    answer: `
+💡 Here's what we know: Users who focus on roles with 75%+ compatibility score have 3x better callback rates than those applying broadly. 
+
+🤔 Why? Because higher compatibility means you're genuinely qualified, you'll interview with confidence, and you'll be a strong candidate among the finalists. 
+
+👀 You're not hoping to sneak past ATS filters or fake experience levels. You're going into interviews prepared to talk about genuine alignment. That preparation, combined with strategic job selection, converts to offers. 
+
+✅ The best career move isn't applying to more jobs—it's applying to the right ones. ResAlign helps you find those.`,
   },
   {
     id: 'faq-12',
     question: 'What if I\'m changing careers or industries?',
-    answer: 'This is where ResAlign shines for career changers. Your direct experience might not match new roles, but your transferable skills do. ResAlign understands this. You might be a project manager in manufacturing applying to product roles at tech startups. Your PM skills are gold, but the language is different. ResAlign recognizes this contextual alignment instead of just looking for "tech startup experience." It shows you exactly which of your existing skills transfer and which ones you need to develop. Career changes go from "impossible" to "here\'s your strategic roadmap." You see proof that your background is more valuable than you thought.',
+    answer: `💡 This is where ResAlign shines for career changers. 
+
+🥷 Your direct experience might not match new roles, but your transferable skills do. 
+
+✅ ResAlign understands this. You might be a project manager in manufacturing applying to product roles at tech startups. Your PM skills are gold, but the language is different. 
+
+👌 ResAlign recognizes this contextual alignment instead of just looking for tech startup experience. It shows you exactly which of your existing skills transfer and which ones you need to develop. 
+
+🎢 Career changes go from impossible to here's your strategic roadmap. You see proof that your background is more valuable than you thought.`,
   },
   {
     id: 'faq-13',
     question: 'How often should I use ResAlign?',
-    answer: 'Use it for every opportunity you\'re serious about. Spotted a role that interests you? Before spending 30 minutes customizing your application, run it through ResAlign. Takes 2 minutes to get clarity on whether it\'s worth pursuing. Many power users run analyses daily as they browse job boards. The goal isn\'t to use ResAlign constantly—it\'s to use it strategically before major time investments. Each analysis teaches you more about your market value and positioning. After 10-15 analyses, you\'ll see clear patterns in what roles and companies fit your profile, which dramatically accelerates your search effectiveness.',
+    answer: `💡 Use it for every opportunity you're serious about.
+
+🤩 Spotted a role that interests you? Before spending 30 minutes customizing your application, run it through ResAlign.
+
+🕒 Takes 2 minutes to get clarity on whether it's worth pursuing. 
+
+👨‍💻 Many power users run analyses daily as they browse job boards. 
+
+🎯 The goal isn't to use ResAlign constantly—it's to use it strategically before major time investments. 
+
+📄Each analysis teaches you more about your market value and positioning. 
+
+🚀 After 10-15 analyses, you'll see clear patterns in what roles and companies fit your profile, which dramatically accelerates your search effectiveness.`,
   },
   {
     id: 'faq-14',
@@ -81,7 +125,24 @@ const faqItems: FAQItem[] = [
   {
     id: 'faq-15',
     question: 'I\'m worried about having my data on yet another platform. Why should I trust you?',
-    answer: 'Fair question. Here\'s our commitment: (1) We\'re transparent—read our full Privacy Policy and Terms of Service before signing up. (2) We don\'t monetize your data. No selling to recruiters, no AI training on your resume, no ads based on your data. (3) You have absolute control—delete your account and all data permanently with one click. (4) We use enterprise security (Supabase) not homegrown solutions. (5) We\'re auditable—our infrastructure is designed for compliance with GDPR, CCPA, and other privacy laws. We\'re betting our business on trust. If we violate it, we lose everything. You can validate this by reading our privacy policy and security practices. We have nothing to hide.',
+    answer: `Fair question. Here's our commitment:
+
+✅ Transparency
+Read our full Privacy Policy and Terms of Service before signing up. We hide nothing.
+
+✅ No Data Monetization
+No selling to recruiters, no AI training on your resume, no ads based on your data.
+
+✅ Absolute Control
+Delete your account and all data permanently with one click. Your data is yours.
+
+✅ Enterprise Security
+We use Supabase (not homegrown solutions) for industry-standard security practices.
+
+✅ Compliance & Auditability
+Our infrastructure is designed for compliance with GDPR, CCPA, and other privacy laws.
+
+We're betting our business on trust. If we violate it, we lose everything. You can validate this by reading our privacy policy and security practices. We have nothing to hide.`,
   },
 ]
 
@@ -208,7 +269,7 @@ export const FAQ = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.1, duration: 0.3 }}
-                          className="text-gray-300 leading-relaxed"
+                          className="text-gray-300 leading-relaxed whitespace-pre-wrap"
                         >
                           {item.answer}
                         </motion.p>
