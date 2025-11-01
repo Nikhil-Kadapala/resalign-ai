@@ -153,6 +153,14 @@ export const useAnalyzeAPI = () => {
           throw new Error('Failed to get database IDs from extraction. Please try again.');
         }
         
+        // Store database IDs in both progressState and separate state for navigation
+        setDatabaseIds({ resumeDbId, jdDbId });
+        setProgressState((prev) => ({
+          ...prev,
+          resumeDbId,
+          jdDbId,
+        }));
+        
         // Set timeout for analysis (5 minutes max)
         timeoutRef.current = setTimeout(() => {
           cleanup();
@@ -266,6 +274,7 @@ export const useAnalyzeAPI = () => {
    */
   const reset = useCallback(() => {
     cleanup();
+    setDatabaseIds({ resumeDbId: null, jdDbId: null });
     setProgressState({
       currentStatus: '',
       progress: 0,
@@ -278,6 +287,11 @@ export const useAnalyzeAPI = () => {
     setIsLoading(false);
   }, [cleanup]);
 
+  const [databaseIds, setDatabaseIds] = useState<{ resumeDbId: string | null; jdDbId: string | null }>({
+    resumeDbId: null,
+    jdDbId: null,
+  });
+
   return {
     progressState,
     isLoading,
@@ -285,5 +299,6 @@ export const useAnalyzeAPI = () => {
     startAnalysis,
     cancelAnalysis,
     reset,
+    databaseIds,
   };
 };
