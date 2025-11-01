@@ -53,9 +53,18 @@ async def extract_data_from_resume_and_jd(
         resume_upload = params.resume_upload
         jd_upload = params.jd_upload
         
+        # Extraction timeout in seconds
+        EXTRACTION_TIMEOUT = 120
+        
         extraction_tasks = [
-            reducto.parse_and_extract_from_resume(resume_upload),
-            reducto.parse_and_extract_from_jd(jd_upload),
+            asyncio.wait_for(
+                reducto.parse_and_extract_from_resume(resume_upload),
+                timeout=EXTRACTION_TIMEOUT
+            ),
+            asyncio.wait_for(
+                reducto.parse_and_extract_from_jd(jd_upload),
+                timeout=EXTRACTION_TIMEOUT
+            ),
         ]
         
         results = await asyncio.gather(*extraction_tasks, return_exceptions=True)
