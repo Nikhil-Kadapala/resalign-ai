@@ -122,14 +122,14 @@ async def upload_resume_and_jd(
             
             f"\n\n*********************Supabase Upload Results*********************\n"
             f"\nSuccessfully uploaded files for user {params.user_id}: \n"
-            f"\nResume path ===> {supabase_resume_upload.json().get('Key')}\n"
-            f"\nJD path     ===> {supabase_jd_upload.json().get('Key')}\n"
+            f"\nResume path ===> {params.user_id}/resumes/{params.resume_file.filename}\n"
+            f"\nJD path     ===> {params.user_id}/jds/{params.jd_file.filename}\n"
             f"\n******************End of Supabase Upload Results*****************\n\n"
         )
 
-        # Extract Supabase storage paths
-        resume_storage_path = supabase_resume_upload.json().get('Key') or f"{params.user_id}/resumes/{params.resume_file.filename}"
-        jd_storage_path = supabase_jd_upload.json().get('Key') or f"{params.user_id}/jds/{params.jd_file.filename}"
+        # Use the known storage paths (files are uploaded with predictable paths)
+        resume_storage_path = f"{params.user_id}/resumes/{params.resume_file.filename}"
+        jd_storage_path = f"{params.user_id}/jds/{params.jd_file.filename}"
 
         # Return structured response
         return UploadResponse(
