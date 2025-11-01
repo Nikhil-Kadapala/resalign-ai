@@ -3,16 +3,20 @@ Reducto integration service with actual schema support.
 Integrated with exact Reducto extraction schemas.
 """
 import logging
+import asyncio
 import httpx
 from typing import Tuple, Optional
 from api.config import settings
 
 from pathlib import Path
-from reducto import Reducto
+from reducto import Reducto, AsyncReducto
 from reducto._types import Omit, FileTypes, omit
 from reducto.types.shared import Upload, PipelineResponse
 
 logger = logging.getLogger(__name__)
+
+# Timeout configuration (in seconds)
+REDUCTO_TIMEOUT = 120  # 120 second timeout for Reducto operations
 
 class ReductoUploadError(Exception):
     """Exception raised for errors in the Reducto upload process."""
@@ -55,19 +59,29 @@ class ReductoClient:
         file: Optional[FileTypes] | Omit = omit,
     ) -> Upload:
         """
-        Upload a file to Reducto.
+        Upload a file to Reducto asynchronously.
 
         Args:
             extension: Optional file extension
             file: File to upload
+            
+        Returns:
+            Upload: The upload response object
+            
+        Raises:
+            ReductoUploadError: If upload fails
         """
-        # The Reducto client upload method may be synchronous or async
-        # Try synchronous first, wrap in asyncio.to_thread if needed
         try:
-            return self.client.upload(extension=extension, file=file)
+            upload_response = await asyncio.to_thread(
+                lambda: self.client.upload(
+                    extension=extension,
+                    file=file
+                )
+            )
+            logger.debug(f"File uploaded successfully to Reducto with ID: {upload_response.file_id}")
+            return upload_response
         except Exception as e:
-            # If it's actually async, this will fail
-            # For now, assume it's synchronous
+            logger.error(f"Failed to upload file to Reducto: {str(e)}")
             raise ReductoUploadError(f"Failed to upload file: {str(e)}")
     
     async def parse_and_extract_from_resume(
@@ -86,14 +100,16 @@ class ReductoClient:
             
         """
         try:
-            logger.info(f"Parsing and extracting datafrom resume: {upload.file_id}")
+            logger.info(f"Parsing and extracting from resume: {upload.file_id}")
             
-            pipeline_response = self.client.pipeline.run(
-                input=upload,
-                pipeline_id=self.resume_pipeline_id
+            pipeline_response = await asyncio.to_thread(
+                lambda: self.client.pipeline.run(
+                    input=upload,
+                    pipeline_id=self.resume_pipeline_id
+                )
             )
             
-            logger.info(f"Resume data extracted successfully: {pipeline_response.result.extract.result[0]}")
+            logger.info(f"Resume data extracted successfully: {pipeline_response}")
             return pipeline_response
             
         except httpx.HTTPError as e:
@@ -119,14 +135,16 @@ class ReductoClient:
             
         """
         try:
-            logger.info(f"Parsing and extracting datafrom JD: {upload.file_id}")
+            logger.info(f"Parsing and extracting from JD: {upload.file_id}")
             
-            pipeline_response = self.client.pipeline.run(
-                input=upload,
-                pipeline_id=self.jd_pipeline_id
+            pipeline_response = await asyncio.to_thread(
+                lambda: self.client.pipeline.run(
+                    input=upload,
+                    pipeline_id=self.jd_pipeline_id
+                )
             )
             
-            logger.info(f"JD data extracted successfully: {pipeline_response.result.extract.result[0]}")
+            logger.info(f"JD data extracted successfully: {pipeline_response}")
             return pipeline_response
             
         except httpx.HTTPError as e:
