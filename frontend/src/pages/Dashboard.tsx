@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { DashboardLayout } from '../components/DashboardLayout'
@@ -29,7 +29,7 @@ export const Dashboard = () => {
   const { validateFile, formatFileSize } = useFileValidation()
   const { isLoading: isVerifying, processJobDescriptionUrl } = useUrlVerification()
   const { isLoading: isUploading, uploadResumeAndJD } = useUploadAPI()
-  const { progressState, startAnalysis, cancelAnalysis, reset: resetAnalysis } = useAnalyzeAPI()
+  const { progressState, startAnalysis, cancelAnalysis, reset: resetAnalysis, databaseIds } = useAnalyzeAPI()
 
   const [uploadState, setUploadState] = useState<UploadState>({
     file: null,
@@ -48,6 +48,18 @@ export const Dashboard = () => {
   const [isProcessingUrl, setIsProcessingUrl] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Navigate to results page when analysis completes
+  useEffect(() => {
+    if (progressState.isComplete && !progressState.hasError && databaseIds.resumeDbId && databaseIds.jdDbId) {
+      // Small delay to let modal show completion message
+      const timer = setTimeout(() => {
+        navigate(`/analysis/${databaseIds.resumeDbId}/${databaseIds.jdDbId}`)
+        setShowAnalysisModal(false)
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [progressState.isComplete, progressState.hasError, databaseIds, navigate])
 
   const handleFileSelect = (file: File) => {
     setUploadState(prev => ({ ...prev, error: null }))
@@ -289,11 +301,8 @@ export const Dashboard = () => {
       setShowAnalysisModal(true)
       resetAnalysis()
 
+      // Start analysis (will extract data and get database IDs, then run analysis)
       await startAnalysis(result)
-
-      setTimeout(() => {
-        navigate(`/analysis/${result.resume_upload.file_id}/${result.jd_upload.file_id}`)
-      }, 1500)
     } catch (error) {
       console.error('Analysis failed:', error)
       const errorMsg = error instanceof Error ? error.message : 'Failed to start analysis'
