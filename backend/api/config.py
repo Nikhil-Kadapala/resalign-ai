@@ -43,7 +43,7 @@ class Settings(BaseSettings):
 
     # === OpenAI / LLM ===
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY")
-    LLM_MODEL: str = os.getenv("LLM_MODEL", "gemini-flash-latest")
+    LLM_MODEL: str = os.getenv("LLM_MODEL", "gemini-2.5-pro")
 
     # === Resume Processing ===
     RESUME_MAX_SIZE_MB: int = int(os.getenv("RESUME_MAX_SIZE_MB", "10"))
