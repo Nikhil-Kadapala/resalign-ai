@@ -94,10 +94,14 @@ class SupabaseClient:
             
             for folder_name, folder_path in folders.items():
                 try:
-                    self.storage.upload(
-                        path=f"{folder_path}.placeholder",
-                        file=placeholder_content,
-                        file_options={"upsert": False}
+                    await asyncio.to_thread(
+                        lambda: self.client.storage
+                            .from_(self.supabase_bucket)
+                            .upload(
+                                path=f"{folder_path}.placeholder",
+                                file=placeholder_content,
+                                file_options={"upsert": False}
+                            )
                     )
                     logger.info(f"Folder ensured: {folder_path}")
                 except Exception as e:
@@ -155,6 +159,36 @@ class SupabaseClient:
         except Exception as e:
             logger.error(f"Failed to upload file {path}: {str(e)}")
             raise SupabaseUploadError(f"Failed to upload file {path}: {str(e)}")
+
+    async def download_file(self, path: str) -> bytes:
+        """
+        Download a file from Supabase Storage asynchronously.
+
+        Args:
+            path: Path in bucket (e.g., "user_id/resumes/file.pdf")
+
+        Returns:
+            File content as bytes
+
+        Raises:
+            SupabaseStorageError: If download fails
+        """
+        try:
+            logger.info(f"Downloading file from: {path}")
+
+            # Run the blocking Supabase download in a thread pool
+            file_bytes = await asyncio.to_thread(
+                lambda: self.client.storage
+                    .from_(self.supabase_bucket)
+                    .download(path)
+            )
+            
+            logger.debug(f"Successfully downloaded file {path} ({len(file_bytes)} bytes)")
+            return file_bytes
+
+        except Exception as e:
+            logger.error(f"Failed to download file {path}: {str(e)}")
+            raise SupabaseStorageError(f"Failed to download file {path}: {str(e)}")
 
     async def insert(self, table: str, data: Dict[str, Any]) -> Dict[str, Any]:
         """
