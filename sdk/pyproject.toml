@@ -1,0 +1,98 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resalign"
+version = "0.1.0"
+description = "Python SDK for ResAlign AI - Intelligent Resume Analysis & Career Alignment"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "ResAlign AI Team", email = "support@alignai.cv"}
+]
+maintainers = [
+    {name = "ResAlign AI Team", email = "support@alignai.cv"}
+]
+keywords = [
+    "resume",
+    "analysis",
+    "career",
+    "ai",
+    "machine-learning",
+    "job-matching",
+    "recruitment",
+    "hr-tech"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Office/Business",
+    "Typing :: Typed"
+]
+
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.9.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+async = [
+    "aiofiles>=24.1.0",
+]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=5.0.0",
+    "black>=24.0.0",
+    "mypy>=1.8.0",
+    "isort>=5.13.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/nikhil-kadapala/resalign-ai"
+Documentation = "https://docs.resalign.ai"
+Repository = "https://github.com/nikhil-kadapala/resalign-ai"
+"Bug Tracker" = "https://github.com/nikhil-kadapala/resalign-ai/issues"
+Changelog = "https://github.com/nikhil-kadapala/resalign-ai/releases"
+
+[tool.setuptools]
+packages = ["resalign"]
+
+[tool.setuptools.package-data]
+resalign = ["py.typed"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311", "py312"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
